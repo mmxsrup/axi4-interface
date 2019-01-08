@@ -1,4 +1,4 @@
-import axi_pkg::*;
+import axi_lite_pkg::*;
 
 interface axi_lite_if;
 

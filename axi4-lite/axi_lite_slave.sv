@@ -1,4 +1,4 @@
-import axi_pkg::*;
+import axi_lite_pkg::*;
 
 module axi_lite_slave (
 	axi_lite_if.slave s_axi_lite

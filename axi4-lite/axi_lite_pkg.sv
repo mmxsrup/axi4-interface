@@ -1,4 +1,4 @@
-package axi_pkg;
+package axi_lite_pkg;
 
 	localparam ADDR_WIDTH = 32;
 	localparam DATA_WIDTH = 32;
