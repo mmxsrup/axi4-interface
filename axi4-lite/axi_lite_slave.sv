@@ -5,32 +5,32 @@ module axi_lite_slave (
 );
 
 	typedef enum logic [2 : 0] {IDLE, RADDR, RDATA, WADDR, WDATA, WRESP} state_type;
-	state_type [2 : 0] state, next_state;
+	state_type state, next_state;
 
-	logic [ADDR_WIDTH - 1 : 0] addr;
-	logic [ADDR_WIDTH - 1 : 0] data[0 : 31];
+	addr_t addr;
+	data_t buffer[0 : 31];
 
 	// AR
-	assign s_axi_lite.arready = (next_state == RADDR) ? 1 : 0;
+	assign s_axi_lite.arready = (state == RADDR) ? 1 : 0;
 
 	// R
-	assign s_axi_lite.rdata  = (next_state == RDATA) ? data[addr] : 0;
+	assign s_axi_lite.rdata  = (state == RDATA) ? buffer[addr] : 0;
 	assign s_axi_lite.rresp  = RESP_OKAY;
-	assign s_axi_lite.rvalid = (next_state == RDATA) ? 1 : 0;
+	assign s_axi_lite.rvalid = (state == RDATA) ? 1 : 0;
 
 	// AW
-	assign s_axi_lite.awready = (next_state == WADDR) ? 1 : 0;
+	assign s_axi_lite.awready = (state == WADDR) ? 1 : 0;
 
 	// W
-	assign s_axi_lite.wready = (next_state == WDATA) ? 1 : 0;
+	assign s_axi_lite.wready = (state == WDATA) ? 1 : 0;
 
 	// B
-	assign s_axi_lite.bvalid = (next_state == WRESP) ? 1 : 0;
+	assign s_axi_lite.bvalid = (state == WRESP) ? 1 : 0;
 	assign s_axi_lite.bresp  = RESP_OKAY;
 
 
-	always_ff @(posedge s_axi_lite.clk) begin
-		if (s_axi_lite.rst) begin
+	always_ff @(posedge s_axi_lite.aclk) begin
+		if (~s_axi_lite.areset_n) begin
 			addr <= 0;
 		end else begin
 			case (state)
@@ -38,6 +38,16 @@ module axi_lite_slave (
 				WADDR : addr <= s_axi_lite.awaddr;
 				default : addr <= 32'h0;
 			endcase
+		end
+	end
+
+	always_ff @(posedge  s_axi_lite.aclk) begin
+		if (~s_axi_lite.areset_n) begin
+			for (int i = 0; i < 32; i++) begin
+				buffer[i] <= 32'h0;
+			end
+		end else begin
+			if (state == WDATA) buffer[addr] <= s_axi_lite.wdata;
 		end
 	end
 
@@ -53,8 +63,8 @@ module axi_lite_slave (
 		endcase
 	end
 
-	always_ff @(posedge s_axi_lite.clk) begin
-		if (s_axi_lite.rst) begin
+	always_ff @(posedge s_axi_lite.aclk) begin
+		if (~s_axi_lite.areset_n) begin
 			state <= IDLE;
 		end else begin
 			state <= next_state;
