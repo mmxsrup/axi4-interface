@@ -1,6 +1,8 @@
 import axi_pkg::*;
 
 module axi_master (
+	input aclk,
+	input areset_n,
 	axi_if.master m_axi,
 	input logic start_read,
 	input logic start_write
@@ -45,8 +47,8 @@ module axi_master (
 	// B
 	assign m_axi.bready = (state == WRESP) ? 1 : 0;
 
-	always_ff @(posedge m_axi.aclk) begin
-		if (~m_axi.areset_n) begin
+	always_ff @(posedge aclk) begin
+		if (~areset_n) begin
 			for (int i = 0; i < 8; i++) begin
 				rdata[i] <= 32'h0;
 			end
@@ -61,8 +63,8 @@ module axi_master (
 		end
 	end
 
-	always_ff @(posedge m_axi.aclk) begin
-		if (~m_axi.areset_n) begin
+	always_ff @(posedge aclk) begin
+		if (~areset_n) begin
 			start_read_delay  <= 0;
 			start_write_delay <= 0;
 		end else begin
@@ -83,8 +85,8 @@ module axi_master (
 		endcase
 	end
 
-	always_ff @(posedge m_axi.aclk) begin
-		if (~m_axi.areset_n) begin
+	always_ff @(posedge aclk) begin
+		if (~areset_n) begin
 			state <= IDLE;
 		end else begin
 			state <= next_state;

@@ -1,6 +1,8 @@
 import axi_lite_pkg::*;
 
 module axi_lite_slave (
+	input logic aclk,
+	input logic areset_n,
 	axi_lite_if.slave s_axi_lite
 );
 
@@ -29,8 +31,8 @@ module axi_lite_slave (
 	assign s_axi_lite.bresp  = RESP_OKAY;
 
 
-	always_ff @(posedge s_axi_lite.aclk) begin
-		if (~s_axi_lite.areset_n) begin
+	always_ff @(posedge aclk) begin
+		if (~areset_n) begin
 			addr <= 0;
 		end else begin
 			case (state)
@@ -41,8 +43,8 @@ module axi_lite_slave (
 		end
 	end
 
-	always_ff @(posedge  s_axi_lite.aclk) begin
-		if (~s_axi_lite.areset_n) begin
+	always_ff @(posedge  aclk) begin
+		if (~areset_n) begin
 			for (int i = 0; i < 32; i++) begin
 				buffer[i] <= 32'h0;
 			end
@@ -63,8 +65,8 @@ module axi_lite_slave (
 		endcase
 	end
 
-	always_ff @(posedge s_axi_lite.aclk) begin
-		if (~s_axi_lite.areset_n) begin
+	always_ff @(posedge aclk) begin
+		if (~areset_n) begin
 			state <= IDLE;
 		end else begin
 			state <= next_state;

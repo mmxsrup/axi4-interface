@@ -1,6 +1,8 @@
 import axi_pkg::*;
 
 module axi_slave (
+	input aclk,
+	input areset_n,
 	axi_if.slave s_axi
 );
 
@@ -36,8 +38,8 @@ module axi_slave (
 	assign s_axi.bresp  = RESP_OKAY;
 
 
-	always_ff @(posedge s_axi.aclk) begin
-		if (~s_axi.areset_n) begin
+	always_ff @(posedge aclk) begin
+		if (~areset_n) begin
 			addr  <= 0;
 			len   <= 0;
 			size  <= 0;
@@ -60,8 +62,8 @@ module axi_slave (
 		end
 	end
 
-	always_ff @(posedge s_axi.aclk) begin
-		if(~s_axi.areset_n) begin
+	always_ff @(posedge aclk) begin
+		if(~areset_n) begin
 			len_cnt <= 0;
 			for (int i = 0; i < 8; i++) begin
 				buffer[i] <= 32'h0;
@@ -97,8 +99,8 @@ module axi_slave (
 		endcase
 	end
 
-	always_ff @(posedge s_axi.aclk) begin
-		if (~s_axi.areset_n) begin
+	always_ff @(posedge aclk) begin
+		if (~areset_n) begin
 			state <= IDLE;
 		end else begin
 			state <= next_state;

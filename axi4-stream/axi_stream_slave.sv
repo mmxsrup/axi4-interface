@@ -1,6 +1,8 @@
 import axi_stream_pkg::*;
 
 module axi_stream_slave (
+	input aclk,
+	input areset_n,
 	axi_stream_if.slave s_axi_stream
 );
 
@@ -12,8 +14,8 @@ module axi_stream_slave (
 
 	assign s_axi_stream.tready = (state == RECV) ? 1 : 0;
 
-	always_ff @(posedge s_axi_stream.aclk) begin
-		if (~s_axi_stream.areset_n) begin
+	always_ff @(posedge aclk) begin
+		if (~areset_n) begin
 			packet_len_cnt <= 0;
 		end else begin
 			if (s_axi_stream.tvalid && s_axi_stream.tready) begin
@@ -31,8 +33,8 @@ module axi_stream_slave (
 		endcase
 	end
 
-	always_ff @(posedge s_axi_stream.aclk) begin
-		if (~s_axi_stream.areset_n) begin
+	always_ff @(posedge aclk) begin
+		if (~areset_n) begin
 			state <= IDLE;
 		end else begin
 			state <= next_state;

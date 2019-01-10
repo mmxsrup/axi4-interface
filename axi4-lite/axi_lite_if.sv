@@ -2,9 +2,6 @@ import axi_lite_pkg::*;
 
 interface axi_lite_if;
 
-	logic aclk;
-	logic areset_n;
-
 	// Read Address Channel
 	addr_t araddr;
 	logic arvalid;
@@ -33,7 +30,6 @@ interface axi_lite_if;
 	logic bready;
 
 	modport master (
-		input aclk, areset_n,
 		output araddr, arvalid, input arready,
 		input rdata, rresp, rvalid, output rready,
 		output awaddr, awvalid, input awready,
@@ -42,7 +38,6 @@ interface axi_lite_if;
 	);
 
 	modport slave (
-		input aclk, areset_n,
 		input araddr, arvalid, output arready,
 		output rdata, rresp, rvalid, input rready,
 		input awaddr, awvalid, output awready,
