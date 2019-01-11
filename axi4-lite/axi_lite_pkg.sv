@@ -14,4 +14,52 @@ package axi_lite_pkg;
 	typedef logic [STRB_WIDTH - 1 : 0] strb_t;
 	typedef logic [1 : 0] resp_t;
 
+
+	// Read Address Channel
+	typedef struct packed {
+		addr_t addr;
+		logic valid;
+		logic ready;
+	} ar_chan_t;
+
+	// Read Data Channel
+	typedef struct packed {
+		data_t data;
+		resp_t resp;
+		logic valid;
+		logic ready;
+	} r_chan_t;
+
+	// Write Address Channel
+	typedef struct packed {
+		addr_t addr;
+		logic valid;
+		logic ready;
+	} aw_chan_t;
+
+	// Write Data Channel
+	typedef struct packed {
+		data_t data;
+		strb_t strb;
+		logic valid;
+		logic ready;
+	} w_chan_t;
+
+	// Write Response Channel
+	typedef struct packed {
+		resp_t resp;
+		logic valid;
+		logic ready;
+	} b_chan_t;
+
+
+	typedef struct packed {
+		ar_chan_t ar;
+		r_chan_t r;
+		aw_chan_t aw;
+		w_chan_t w;
+		b_chan_t b;
+	} axi_lite_bus_t;
+
+
 endpackage
