@@ -1,6 +1,8 @@
 import axi_lite_pkg::*;
 
-module axi_lite_master (
+module axi_lite_master#(
+	parameter int ADDR = 32'h4
+)(
 	input logic aclk,
 	input logic areset_n,
 	axi_lite_if.master m_axi_lite,
@@ -11,7 +13,7 @@ module axi_lite_master (
 	typedef enum logic [2 : 0] {IDLE, RADDR, RDATA, WADDR, WDATA, WRESP} state_type;
 	state_type state, next_state;
 
-	addr_t addr = 32'h4;
+	addr_t addr = ADDR;
 	data_t data = 32'hdeadbeef, rdata;
 	logic start_read_delay, start_write_delay;
 
@@ -39,7 +41,7 @@ module axi_lite_master (
 		if (~areset_n) begin
 			rdata <= 0;
 		end else begin
-			if (state == WDATA) rdata <= m_axi_lite.wdata;
+			if (state == RDATA) rdata <= m_axi_lite.rdata;
 		end
 	end
 
